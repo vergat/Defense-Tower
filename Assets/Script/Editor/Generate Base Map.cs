@@ -43,6 +43,7 @@ public static class GenerateBaseMap {
             GameObject firstChunk = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
             firstChunk.transform.SetParent(rootMap.transform);
             firstChunk.name = firstChunk.name + "_"+counter;
+            firstChunk.transform.position =new  Vector3(0, 0, 0);
             counter++;
             chunks.Add(firstChunk);
             for (int row=1; chunks.Count != 0;row++)
@@ -78,8 +79,13 @@ public static class GenerateBaseMap {
                 }
                 chunks = tempListchunks;
             }
-            
+            Camera camera = GameObject.FindObjectOfType<Camera>();
+            Vector3 cameraPos;
+            cameraPos.x = 0;
+            cameraPos.y = hight* (sizeMap-1);
+            cameraPos.z = -1;
+            camera.transform.position = cameraPos;
         }
-
+        
     }
 }
