@@ -6,52 +6,79 @@ using UnityEditor;
 public static class GenerateBaseMap {
 
     static private GameObject prefab=null;
+    static private float offsetWidth = 1.0f;
+    static private float offsetHight = 33.0f;
+    static private uint sizeMap = 7;
 
     [MenuItem("GenerateBaseMap/Generator")]
     public static void Generator()
     {
         GameObject rootMap;
+
         rootMap = GameObject.Find("rootMap");
+        
+        //Check if exist a root and delete the object inside it
         if (rootMap == null)
         {
             rootMap = new GameObject("rootMap");
         }
         int numChild = rootMap.transform.childCount;
-        for (int i=0; i < numChild; ++i)
+        for (int index=0; index < numChild; ++index)
         {
             GameObject.DestroyImmediate(rootMap.transform.GetChild(0).gameObject);
         }
+
         prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Sprite/Landscape/landscape_empty.prefab");
+
         if (prefab != null)
         {
             int counter = 0;
-            List<GameObject> nextChunk = new List<GameObject>();
+            List<GameObject> chunks = new List<GameObject>();
 
             SpriteRenderer sprite = prefab.GetComponent<SpriteRenderer>();
 
-            float width = (((sprite.sprite.texture.width-1.0f)/100.0f)/2.0f);
-            float hight = (((sprite.sprite.texture.height - 33.0f) / 100.0f) / 2.0f);
+            float width = (((sprite.sprite.texture.width - offsetWidth)/100.0f)/2.0f);
+            float hight = (((sprite.sprite.texture.height - offsetHight)/100.0f)/2.0f);
 
-            GameObject aux = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-            aux.transform.SetParent(rootMap.transform);
-            aux.name = aux.name + "_"+counter;
-            nextChunk.Add(aux);
-            foreach(GameObject a in nextChunk)
+            GameObject firstChunk = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+            firstChunk.transform.SetParent(rootMap.transform);
+            firstChunk.name = firstChunk.name + "_"+counter;
+            counter++;
+            chunks.Add(firstChunk);
+            for (int row=1; chunks.Count != 0;row++)
             {
-
+                List<GameObject> tempListchunks = new List<GameObject>();
+                for (int indexChunks = 0; indexChunks < chunks.Count; indexChunks++)
+                {
+                    Vector3 newPosition;
+                    if ((indexChunks == 0) && (row<(sizeMap)))
+                    {
+                        GameObject firstChunkLeft = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+                        firstChunkLeft.transform.SetParent(rootMap.transform);
+                        newPosition.x = chunks[indexChunks].transform.position.x - width;
+                        newPosition.y = chunks[indexChunks].transform.position.y + hight;
+                        newPosition.z = chunks[indexChunks].transform.position.y + hight;
+                        firstChunkLeft.transform.position = newPosition;
+                        firstChunkLeft.name = firstChunkLeft.name + "_" + counter;
+                        counter++;
+                        tempListchunks.Add(firstChunkLeft);
+                    }
+                    if ((row<(sizeMap)) || (indexChunks<chunks.Count-1))
+                    {
+                        GameObject newChunk = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+                        newChunk.transform.SetParent(rootMap.transform);
+                        newPosition.x = chunks[indexChunks].transform.position.x + width;
+                        newPosition.y = chunks[indexChunks].transform.position.y + hight;
+                        newPosition.z = chunks[indexChunks].transform.position.y + hight;
+                        newChunk.transform.position = newPosition;
+                        newChunk.name = newChunk.name + "_" + counter;
+                        counter++;
+                        tempListchunks.Add(newChunk);
+                    }
+                }
+                chunks = tempListchunks;
             }
-            for (int i = 0; i < nextChunk.Count; i++)
-            {
-                GameObject aux2 = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-                aux2.transform.SetParent(rootMap.transform);
-                Vector3 newPosition;
-                newPosition.x = aux.transform.position.x + width;
-                newPosition.y = aux.transform.position.y + hight;
-                newPosition.z = aux.transform.position.y + hight;
-                aux2.transform.position = newPosition;
-                aux = aux2;
-            }
-
+            
         }
 
     }
