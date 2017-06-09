@@ -6,6 +6,8 @@ public class ShootEnemy : MonoBehaviour {
     private List<GameObject> enemyInRange;
     [SerializeField]
     private GameObject bullet=null;
+    [SerializeField]
+    private float fireRate = 1.0f;
     private float lastShoot;
 	// Use this for initialization
 	void Start () {
@@ -18,7 +20,8 @@ public class ShootEnemy : MonoBehaviour {
         
         if (enemyInRange.Count > 0)
         {
-            if (Time.time - lastShoot > 1)
+            Debug.Log("ciao");
+            if (Time.time - lastShoot > fireRate)
             {
                 Shoot(enemyInRange[0]);
                 lastShoot = Time.time;
@@ -29,14 +32,14 @@ public class ShootEnemy : MonoBehaviour {
 	}
     void OnTriggerEnter2D(Collider2D enemy)
     {
-        if (enemy.gameObject.tag.Equals(""))
+        if (enemy.gameObject.tag.Equals("Enemy"))
         {
             enemyInRange.Add(enemy.gameObject);
         }
     }
     void OnTriggerExit2D(Collider2D enemy)
     {
-        if (enemy.gameObject.tag.Equals(""))
+        if (enemy.gameObject.tag.Equals("Enemy"))
         {
             enemyInRange.Remove(enemy.gameObject);
         }

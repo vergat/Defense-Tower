@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour {
 
-    public float speed = 10;
+    public float speed = 10.0f;
     public int damage;
     public GameObject target;
     public Vector3 startPosition;
@@ -21,7 +21,11 @@ public class Bullet : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        
+        if (target != null)
+        {
+            targetPosition = target.transform.position;
+            distance = Vector3.Distance(startPosition, targetPosition);
+        }
         float timeInterval = Time.time - startTime;
         gameObject.transform.position = Vector3.Lerp(startPosition, targetPosition, timeInterval * speed / distance);
         if (gameObject.transform.position.Equals(targetPosition))
