@@ -20,7 +20,6 @@ public class ShootEnemy : MonoBehaviour {
         
         if (enemyInRange.Count > 0)
         {
-            Debug.Log("ciao");
             if (Time.time - lastShoot > fireRate)
             {
                 Shoot(enemyInRange[0]);
@@ -48,12 +47,11 @@ public class ShootEnemy : MonoBehaviour {
     void Shoot(GameObject target)
     {
         Vector3 startPosition = gameObject.transform.position;
-        Vector3 targetPosition = target.transform.position;
+        startPosition.y = startPosition.y+ .2f;
         GameObject newBullet = (GameObject)Instantiate(bullet);
         newBullet.transform.position = startPosition;
         Bullet bulletComp = newBullet.GetComponent<Bullet>();
-        bulletComp.target = target;
-        bulletComp.startPosition = startPosition;
-        bulletComp.targetPosition = targetPosition;
+        bulletComp.Target = target;
+        bulletComp.StartPosition = startPosition;
     }
 }
