@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2107030ebcd621b4dbada26dec87762c, type: 3}
+  m_Name: New RoadSelectorData
+  m_EditorClassIdentifier: 
+  listRoadData:
+  - costo: 10
+    road: {fileID: 21300000, guid: 0a547efca426fa64e9d2c75e211d724e, type: 3}
+  - costo: 10
+    road: {fileID: 21300000, guid: fb743e02a2d47a5408bfa4c2f6b30113, type: 3}
+  - costo: 15
+    road: {fileID: 21300000, guid: 2ac988111cdbf004f88a582011b82353, type: 3}
+  - costo: 15
+    road: {fileID: 21300000, guid: 1f850bced0453fd4bb025fbc419425cc, type: 3}
+  - costo: 15
+    road: {fileID: 21300000, guid: 86be25db9c42e424b8e4a12a998b0f24, type: 3}
+  - costo: 15
+    road: {fileID: 21300000, guid: 2c5cfb5e066fc1747b52ffe2e7533c26, type: 3}
