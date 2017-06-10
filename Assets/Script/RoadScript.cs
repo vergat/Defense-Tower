@@ -3,15 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RoadScript : MonoBehaviour {
-    
+
+    enum Direction
+    {
+        DownRight = 0,
+        DownUp = 1,
+        DownLeft = 2,
+        UpRight = 3,
+        UpDown = 4,
+        UpLeft = 5,
+        RightDown = 6,
+        RightLeft = 7,
+        RightUp = 8,
+        LeftDown = 9,
+        LeftRight = 10,
+        LeftUp = 11
+    };
+
     private GameObject[] board;
     private GameObject[,] boardMatrix;
-    [SerializeField]
-    private Sprite sprite;
+    private List<Vector3> road;
     [SerializeField]
     private Sprite spriteStart;
     [SerializeField]
-    private Sprite spriteEnd;
+    private Sprite spriteBase;
     private int row;
     private int colon;
     private Sprite tmpSprite;
@@ -27,106 +42,254 @@ public class RoadScript : MonoBehaviour {
     private Sprite FromDownToUp;
     [SerializeField]
     private Sprite FromLeftToDown;
+    private bool[] ArrayDirection;
+    [SerializeField]
+    private GameObject Castle;
 
+    [SerializeField]
+    private GameObject Enemy;
+    private int EnemyPosition;
+    [SerializeField]
+    private float EnemySpeed;
+    private float lastWaypointSwitchTime;
+
+    [SerializeField]
+    private int BlockNumber;
 
     void Awake()
     {
+        road = new List<Vector3>();
+        ArrayDirection = new bool[12];
+        Castle.SetActive(false);
+        Enemy.SetActive(false);
         InitializeBoardMatrix();
         SetStartEnd();
+        for (int i = 0; i < ArrayDirection.Length; i++)
+        {
+            ArrayDirection[i] = true;
+        }        
     }
 
     // Use this for initialization
     void Start () {
-        row = 0;
-        colon = 0;
-	}
+
+    }
 	
 	// Update is called once per frame
 	void Update () {		
 
         if (Input.GetKeyDown(KeyCode.S))
         {
-            tmpSprite = FromDownToRight;            
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
-            colon++;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = spriteStart;
+            if (ArrayDirection[(int)Direction.DownRight] && colon < 6 && NextPositionFree(row, colon + 1))
+            {
+                road.Add(new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f));
+                tmpSprite = FromDownToRight;
+                boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
+                colon++;
+                Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
+                ResetDirectionArray();
+                ArrayDirection[(int)Direction.LeftDown] = true;
+                ArrayDirection[(int)Direction.LeftRight] = true;
+                ArrayDirection[(int)Direction.LeftUp] = true;
+                BlockNumberCheck();
+            }            
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
-            tmpSprite = FromLeftToUp;            
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
-            row++;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = spriteStart;
+            if (ArrayDirection[(int)Direction.LeftUp] && row < 6 && NextPositionFree(row + 1, colon))
+            {
+                road.Add(new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f));
+                tmpSprite = FromLeftToUp;
+                boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
+                row++;
+                Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
+                ResetDirectionArray();
+                ArrayDirection[(int)Direction.DownLeft] = true;
+                ArrayDirection[(int)Direction.DownUp] = true;
+                ArrayDirection[(int)Direction.DownRight] = true;
+                BlockNumberCheck();
+            }            
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
-            tmpSprite = FromUpToRight;            
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
-            colon++;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = spriteStart;
+            if (ArrayDirection[(int)Direction.UpRight] && colon < 6 && NextPositionFree(row, colon + 1))
+            {
+                road.Add(new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f));
+                tmpSprite = FromUpToRight;
+                boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
+                colon++;
+                Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
+                ResetDirectionArray();
+                ArrayDirection[(int)Direction.LeftDown] = true;
+                ArrayDirection[(int)Direction.LeftRight] = true;
+                ArrayDirection[(int)Direction.LeftUp] = true;
+                BlockNumberCheck();
+            }            
         }
         if (Input.GetKeyDown(KeyCode.G))
         {
-            tmpSprite = FromLeftToRight;            
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
-            colon++;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = spriteStart;
+            if (ArrayDirection[(int)Direction.LeftRight] && colon < 6 && NextPositionFree(row, colon + 1))
+            {
+                road.Add(new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f));
+                tmpSprite = FromLeftToRight;
+                boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
+                colon++;
+                Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
+                ResetDirectionArray();
+                ArrayDirection[(int)Direction.LeftDown] = true;
+                ArrayDirection[(int)Direction.LeftRight] = true;
+                ArrayDirection[(int)Direction.LeftUp] = true;
+                BlockNumberCheck();
+            }
         }
         if (Input.GetKeyDown(KeyCode.H))
         {
-            tmpSprite = FromDownToUp;            
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
-            row++;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = spriteStart;
+            if(ArrayDirection[(int)Direction.DownUp] && row < 6 && NextPositionFree(row + 1, colon))
+            {
+                road.Add(new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f));
+                tmpSprite = FromDownToUp;
+                boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
+                row++;
+                Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
+                ResetDirectionArray();
+                ArrayDirection[(int)Direction.DownLeft] = true;
+                ArrayDirection[(int)Direction.DownUp] = true;
+                ArrayDirection[(int)Direction.DownRight] = true;
+                BlockNumberCheck();
+            }            
         }
         if (Input.GetKeyDown(KeyCode.J))
         {
-            tmpSprite = FromLeftToDown;            
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
-            row--;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = spriteStart;
+            if (ArrayDirection[(int)Direction.LeftDown] && row > 0 && NextPositionFree(row - 1, colon))
+            {
+                road.Add(new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f));
+                tmpSprite = FromLeftToDown;
+                boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
+                row--;
+                Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
+                ResetDirectionArray();
+                ArrayDirection[(int)Direction.UpDown] = true;
+                ArrayDirection[(int)Direction.UpLeft] = true;
+                ArrayDirection[(int)Direction.UpRight] = true;
+                BlockNumberCheck();
+            }            
         }
         if (Input.GetKeyDown(KeyCode.X))
         {
-            tmpSprite = FromDownToRight;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
-            row--;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = spriteStart;
+            if (ArrayDirection[(int)Direction.RightDown] && row > 0 && NextPositionFree(row - 1, colon))
+            {
+                road.Add(new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f));
+                tmpSprite = FromDownToRight;
+                boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
+                row--;
+                Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
+                ResetDirectionArray();
+                ArrayDirection[(int)Direction.UpDown] = true;
+                ArrayDirection[(int)Direction.UpLeft] = true;
+                ArrayDirection[(int)Direction.UpRight] = true;
+                BlockNumberCheck();
+            }            
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
-            tmpSprite = FromLeftToUp;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
-            colon--;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = spriteStart;
+            if (ArrayDirection[(int)Direction.UpLeft] && colon > 0 && NextPositionFree(row, colon - 1))
+            {
+                road.Add(new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f));
+                tmpSprite = FromLeftToUp;
+                boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
+                colon--;
+                Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
+                ResetDirectionArray();
+                ArrayDirection[(int)Direction.RightDown] = true;
+                ArrayDirection[(int)Direction.RightLeft] = true;
+                ArrayDirection[(int)Direction.RightUp] = true;
+                BlockNumberCheck();
+            }            
         }
         if (Input.GetKeyDown(KeyCode.V))
         {
-            tmpSprite = FromUpToRight;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
-            row++;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = spriteStart;
+            if (ArrayDirection[(int)Direction.RightUp] && row < 6 && NextPositionFree(row + 1, colon))
+            {
+                road.Add(new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f));
+                tmpSprite = FromUpToRight;
+                boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
+                row++;
+                Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
+                ResetDirectionArray();
+                ArrayDirection[(int)Direction.DownLeft] = true;
+                ArrayDirection[(int)Direction.DownUp] = true;
+                ArrayDirection[(int)Direction.DownRight] = true;
+                BlockNumberCheck();
+            }            
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
-            tmpSprite = FromLeftToRight;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
-            colon--;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = spriteStart;
+            if (ArrayDirection[(int)Direction.RightLeft] && colon > 0 && NextPositionFree(row, colon - 1))
+            {
+                road.Add(new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f));
+                tmpSprite = FromLeftToRight;
+                boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
+                colon--;
+                Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
+                ResetDirectionArray();
+                ArrayDirection[(int)Direction.RightDown] = true;
+                ArrayDirection[(int)Direction.RightLeft] = true;
+                ArrayDirection[(int)Direction.RightUp] = true;
+                BlockNumberCheck();
+            }            
         }
         if (Input.GetKeyDown(KeyCode.N))
         {
-            tmpSprite = FromDownToUp;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
-            row--;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = spriteStart;
+            if (ArrayDirection[(int)Direction.UpDown] && row > 0 && NextPositionFree(row - 1, colon))
+            {
+                road.Add(new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f));
+                tmpSprite = FromDownToUp;
+                boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
+                row--;
+                Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
+                ResetDirectionArray();
+                ArrayDirection[(int)Direction.UpDown] = true;
+                ArrayDirection[(int)Direction.UpLeft] = true;
+                ArrayDirection[(int)Direction.UpRight] = true;
+                BlockNumberCheck();
+            }            
         }
         if (Input.GetKeyDown(KeyCode.M))
         {
-            tmpSprite = FromLeftToDown;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
-            colon--;
-            boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = spriteStart;
+            if (ArrayDirection[(int)Direction.DownLeft] && colon > 0 && NextPositionFree(row, colon - 1))
+            {
+                road.Add(new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f));
+                tmpSprite = FromLeftToDown;
+                boardMatrix[row, colon].GetComponent<SpriteRenderer>().sprite = tmpSprite;
+                colon--;
+                Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
+                ResetDirectionArray();
+                ArrayDirection[(int)Direction.RightDown] = true;
+                ArrayDirection[(int)Direction.RightLeft] = true;
+                ArrayDirection[(int)Direction.RightUp] = true;
+                BlockNumberCheck();
+            }            
+        }
+
+        if (Enemy.activeInHierarchy)
+        {
+            float pathLenght = Vector3.Distance(road[EnemyPosition - 1], road[EnemyPosition]);
+            float totalTimeForPath = pathLenght / EnemySpeed;
+            float CurrentTimeOnPath = Time.time - lastWaypointSwitchTime;
+            Enemy.transform.position = Vector3.Lerp(road[EnemyPosition - 1], road[EnemyPosition], CurrentTimeOnPath / totalTimeForPath);
+            if (Enemy.transform.position.Equals(road[EnemyPosition]) && EnemyPosition < road.Count-1)
+            {
+                EnemyPosition++;
+                lastWaypointSwitchTime = Time.time;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            for (int i = 0; i < road.Count; i++)
+            {
+                Debug.Log(road[i].x.ToString() + road[i].y.ToString());
+            }
         }
 
     }
@@ -162,26 +325,66 @@ public class RoadScript : MonoBehaviour {
     private void SetStartEnd()
     {
 
-        int startPointx = Random.Range(0, 6);
-        int startPointy = Random.Range(0, 6);
-        int endPointx = Random.Range(0, 6);
-        int endPointy = Random.Range(0, 6);
-
-        boardMatrix[startPointx, startPointy].GetComponent<SpriteRenderer>().sprite = spriteStart;
-        boardMatrix[endPointx, endPointy].GetComponent<SpriteRenderer>().sprite = spriteEnd;
+        int startPointx = Random.Range(0, 7);
+        int startPointy;
+        if (startPointx == 0 && startPointx == 6)
+        {
+            startPointy = Random.Range(0, 7);
+        }
+        else
+        {
+            startPointy = Random.Range(0, 2);
+            if (startPointy == 1)
+            {
+                startPointy = 6;
+            }
+        }
 
         row = startPointx;
         colon = startPointy;
 
-        NextPosition(startPointx, startPointy);
+        Castle.SetActive(true);
+        Castle.transform.position = new Vector3(boardMatrix[row, colon].transform.position.x, boardMatrix[row, colon].transform.position.y + 0.4f, -0.1f);
 
     }
 
-    private void NextPosition(int pointX, int pointY)
+    private void ResetDirectionArray()
     {
+        for (int i = 0; i < ArrayDirection.Length; i++)
+        {
+            ArrayDirection[i] = false;
+        }
+    }
 
+    private void BlockNumberCheck()
+    {
+        BlockNumber--;
+        if (BlockNumber == 0)
+        {
+            ResetDirectionArray();
+            road.Add(new Vector3(Castle.transform.position.x, Castle.transform.position.y));
+            InitializeEnemy();
+        }
+    }
 
+    private bool NextPositionFree(int pointy, int pointx)
+    {
+        if (boardMatrix[pointy, pointx].GetComponent<SpriteRenderer>().sprite == spriteBase)
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
 
+    private void InitializeEnemy()
+    {
+        Enemy.SetActive(true);
+        EnemyPosition = 0;
+        Enemy.transform.position = road[EnemyPosition];
+        EnemyPosition++;
+        lastWaypointSwitchTime = Time.time;
     }
 
 }
