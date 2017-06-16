@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public delegate void OnRoadSelect(int itemIndex);
+public delegate void OnRoadSelect(RoadData roadDataPassed);
 
 public class WidgetRoadSelector : MonoBehaviour {
 
@@ -62,7 +62,7 @@ public class WidgetRoadSelector : MonoBehaviour {
     public void Onclick()
     {
         Debug.Log(currentRoad.ToString());
-        onRoadSelected(currentRoad);
+        onRoadSelected(roadData[currentRoad]);
     }
 
 

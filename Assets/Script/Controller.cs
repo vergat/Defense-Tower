@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void OnRoadChange(int roadIndex);
+public delegate void OnRoadChange(RoadData roadDataPassed);
 
 public class Controller : MonoBehaviour {
 
@@ -25,11 +25,11 @@ public class Controller : MonoBehaviour {
         uiInstance.onRoadSelected += OnRoadSelectCallBack;
 	}
 	
-    private void OnRoadSelectCallBack(int roadIndex)
+    private void OnRoadSelectCallBack(RoadData roadDataPassed)
     {
         if (onRoadChange != null)
         {
-            onRoadChange(roadIndex);
+            onRoadChange(roadDataPassed);
         }
     }
 
