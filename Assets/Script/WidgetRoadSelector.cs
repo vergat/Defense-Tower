@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public delegate void OnRoadSelect(int itemIndex);
+
 public class WidgetRoadSelector : MonoBehaviour {
 
     [SerializeField]
@@ -24,9 +26,10 @@ public class WidgetRoadSelector : MonoBehaviour {
 
     int currentRoad = 0;
 
+    public OnRoadSelect onRoadSelected = null;
 
     void Start () {
-        
+        this.GetComponent<Canvas>().worldCamera = FindObjectOfType<Camera>();
         roadData = roadDataAsset.ListRoadData;
         mainImageRoad.sprite = roadData[currentRoad].Road;
         roadCost.text = roadData[currentRoad].Costo.ToString();
@@ -58,6 +61,9 @@ public class WidgetRoadSelector : MonoBehaviour {
 
     public void Onclick()
     {
-        Debug.Log("ciao culo");
+        Debug.Log(currentRoad.ToString());
+        onRoadSelected(currentRoad);
     }
+
+
 }

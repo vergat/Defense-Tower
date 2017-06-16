@@ -12,7 +12,6 @@ public class RoadSelectorData : ScriptableObject {
     {
         get { return listRoadData; }
     }
-    
 }
 [System.Serializable]
 public class RoadData
