@@ -1657,8 +1657,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1080211087}
-  - component: {fileID: 1080211086}
   - component: {fileID: 1080211088}
+  - component: {fileID: 1080211089}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1666,29 +1666,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1080211086
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1080211085}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f7d692a7dd62e044b857710cf1b0e62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spriteStart: {fileID: 21300000, guid: aff4fa6c2209a1c409bceb7404d6159f, type: 3}
-  spriteBase: {fileID: 21300000, guid: 5f95c8b6762f37146b8856b17c75317d, type: 3}
-  FromDownToRight: {fileID: 21300000, guid: 2ac988111cdbf004f88a582011b82353, type: 3}
-  FromLeftToUp: {fileID: 21300000, guid: 86be25db9c42e424b8e4a12a998b0f24, type: 3}
-  FromUpToRight: {fileID: 21300000, guid: 2c5cfb5e066fc1747b52ffe2e7533c26, type: 3}
-  FromLeftToRight: {fileID: 21300000, guid: 0a547efca426fa64e9d2c75e211d724e, type: 3}
-  FromDownToUp: {fileID: 21300000, guid: fb743e02a2d47a5408bfa4c2f6b30113, type: 3}
-  FromLeftToDown: {fileID: 21300000, guid: 1f850bced0453fd4bb025fbc419425cc, type: 3}
-  Castle: {fileID: 631912199}
-  Enemy: {fileID: 1937483114}
-  EnemySpeed: 1
-  BlockNumber: 5
 --- !u!4 &1080211087
 Transform:
   m_ObjectHideFlags: 0
@@ -1714,6 +1691,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiPrefab: {fileID: 114030186573377212, guid: adc3101c926b4144fba0787afe2dda99, type: 2}
+--- !u!114 &1080211089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1080211085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40d57eedd5120b948be881901d94a4ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  control: {fileID: 1080211088}
+  spriteStart: {fileID: 21300000, guid: aff4fa6c2209a1c409bceb7404d6159f, type: 3}
+  spriteBase: {fileID: 21300000, guid: 5f95c8b6762f37146b8856b17c75317d, type: 3}
+  FromDownToRight: {fileID: 21300000, guid: 2ac988111cdbf004f88a582011b82353, type: 3}
+  FromLeftToUp: {fileID: 21300000, guid: 86be25db9c42e424b8e4a12a998b0f24, type: 3}
+  FromUpToRight: {fileID: 21300000, guid: 2c5cfb5e066fc1747b52ffe2e7533c26, type: 3}
+  FromLeftToRight: {fileID: 21300000, guid: 0a547efca426fa64e9d2c75e211d724e, type: 3}
+  FromDownToUp: {fileID: 21300000, guid: fb743e02a2d47a5408bfa4c2f6b30113, type: 3}
+  FromLeftToDown: {fileID: 21300000, guid: 1f850bced0453fd4bb025fbc419425cc, type: 3}
+  Castle: {fileID: 631912199}
+  Enemy: {fileID: 1937483114}
+  EnemySpeed: 1
+  BlockNumber: 5
 --- !u!4 &1102458612 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4335617581203098, guid: 2a90eadd450cab249836688c9f33b018,

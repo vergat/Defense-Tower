@@ -61,7 +61,6 @@ public class WidgetRoadSelector : MonoBehaviour {
 
     public void Onclick()
     {
-        Debug.Log(currentRoad.ToString());
         onRoadSelected(roadData[currentRoad]);
     }
 
